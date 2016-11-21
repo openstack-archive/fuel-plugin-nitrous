@@ -1,0 +1,498 @@
+# Copyright 2016 AT&T, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+attributes:
+  metadata:
+    # Settings group can be one of "general", "security", "compute", "network",
+    # "storage", "logging", "openstack_services" and "other".
+    group: 'other'
+  puppet_master_address:
+    value: 'localhost'
+    label: 'Puppet master address'
+    description: 'This will make entry of puppet master in Nitrous nodes.'
+    weight: 21
+    type: "text"
+  env_proxy:
+    value: 'undef'
+    label: 'Enviornment Proxy'
+    description: 'Use if the server requires a proxy.  The default value is "undef".'
+    weight: 22
+    type: "text"
+  node_additional_config:
+    label: "Nitrous config"
+    type: "textarea"
+    validate: "yaml"
+    weight: 30
+    value: |
+      webvirt: xxx.xxx.xxx.xx
+      dhcp_helper: xxx.xxx.xxx.11
+      site_name: YOUR_SITENAME
+      ubuntu_repo: http://archive.ubuntu.com/ubuntu/
+      domain_name: YOUR_DOMAIN
+      network:
+        bonds:
+        - bond-mode: active-backup
+          members:
+          - em1
+          - em2
+          name: bond0
+          vlans:
+          - name: 100
+            native: true
+        - bond-mode: 802.3ad
+          members:
+          - p1p1
+          - p1p2
+          - p2p1
+          - p2p2
+          mtu: '9000'
+          name: bond1
+          vlans:
+          - name: 101  #Management
+          - name: 102  #Storage
+          - name: 103  #Private
+        dhcp-ranges:
+        - end: 10.1.0.252
+          gateway: 10.1.0.1
+          mask: 255.255.255.255
+          name: rack01
+          start: 10.1.0.12
+        dns-nameservers:
+        - 8.8.8.8
+      storage:
+        iscsi_reservation_enabled: false
+        lun_mapping:
+          #ADD YOUR STORAGE LUN INFORMATION
+        storage_backend: local
+        storage_blacklist_enabled: true
+        storage_subnets:
+        - xxx.xx.xxx.0/24
+        storage_type: idc
+        storage_vlan: 102
+        targets:
+        - xxx.xx.xxx.xx
+      nodes:
+      - host_profile: cp-hp2
+        ipmi_address: xxx.xxx.xxx.1
+        ipmi_password: YOUR_PASSWORD
+        ipmi_username: YOUR_USERNAME
+        mac_address: xx:xx:xx:xx:xx:xx
+        name: svr01r01a001
+        power_type: ipmi
+        pxe_address: 10.1.0.5
+        pxe_subnet: rack01
+        server_hardware: DellR900
+        storage:
+          initiator_name: iqn.xxxx-xx.abc.abcdefg:svr01r01a001-6383eecf
+          luns:
+            #ADD YOUR STORAGE LUN INFORMATION
+        type: seed
+        vlans:
+        - address:
+            address: 10.1.0.5
+            gateway: 10.1.0.1
+            netmask: 255.255.255.255
+          name: 100
+        - address:
+            address: 10.1.1.5
+            gateway: 10.1.1.3
+            netmask: 255.255.255.255
+          name: 101
+        - address:
+            address: 10.1.2.5
+            gateway: 10.1.2.3
+            netmask: 255.255.255.255
+          name: 102
+        - address:
+            address: 10.1.3.5
+            gateway: 10.1.3.3
+            netmask: 255.255.255.255
+          name: 103
+      - host_profile: cp-hp2
+        ipmi_address: xxx.xxx.xxx.2
+        ipmi_password: YOUR_PASSWORD
+        ipmi_username: YOUR_USERNAME
+        mac_address: xx:xx:xx:xx:xx:xx
+        name: svr01r01a002
+        power_type: ipmi
+        pxe_address: 10.1.0.6
+        pxe_subnet: rack01
+        server_hardware: DellR900
+        storage:
+          initiator_name: iqn.xxxx-xx.abc.abcdefg:svr01r01a002-0bfa33c0
+          luns:
+            #ADD YOUR STORAGE LUN INFORMATION
+        type: lcp
+        vlans:
+        - address:
+            address: 10.1.0.6
+            gateway: 10.1.0.1
+            netmask: 255.255.255.255
+          name: 100
+        - address:
+            address: 10.1.1.6
+            gateway: 10.1.1.3
+            netmask: 255.255.255.255
+          name: 101
+        - address:
+            address: 10.1.2.6
+            gateway: 10.1.2.3
+            netmask: 255.255.255.255
+          name: 102
+        - address:
+            address: 10.1.3.6
+            gateway: 10.1.3.3
+            netmask: 255.255.255.255
+          name: 103
+      - host_profile: cp-hp2
+        ipmi_address: xxx.xxx.xxx.3
+        ipmi_password: YOUR_PASSWORD
+        ipmi_username: YOUR_USERNAME
+        mac_address: xx:xx:xx:xx:xx:xx
+        name: svr01r01a003
+        power_type: ipmi
+        pxe_address: 10.1.0.7
+        pxe_subnet: rack01
+        server_hardware: DellR900
+        storage:
+          initiator_name: iqn.xxxx-xx.abc.abcdefg:svr01r01a003-cab3c6a4
+          luns:
+            #ADD YOUR STORAGE LUN INFORMATION
+        type: lcp
+        vlans:
+        - address:
+            address: 10.1.0.7
+            gateway: 10.1.0.1
+            netmask: 255.255.255.255
+          name: 100
+        - address:
+            address: 10.1.1.7
+            gateway: 10.1.1.3
+            netmask: 255.255.255.255
+          name: 101
+        - address:
+            address: 10.1.2.7
+            gateway: 10.1.2.3
+            netmask: 255.255.255.255
+          name: 102
+        - address:
+            address: 10.1.3.7
+            gateway: 10.1.3.3
+            netmask: 255.255.255.255
+          name: 103
+      - availability_zone: null
+        host_profile: nv-hp1
+        ipmi_address: xxx.xxx.xxx.4
+        ipmi_password: YOUR_PASSWORD
+        ipmi_username: YOUR_USERNAME
+        mac_address: xx:xx:xx:xx:xx:xx
+        name: svr01r01a004
+        power_type: ipmi
+        pxe_address: 10.1.0.8
+        pxe_subnet: rack04
+        server_hardware: DellR900
+        storage:
+          initiator_name: iqn.xxxx-xx.abc.abcdefg:svr01r01a004-98c8ace6
+        type: compute
+        vlans:
+        - address:
+            address: 10.1.0.8
+            gateway: 10.1.0.1
+            netmask: 255.255.255.255
+          name: 100
+        - address:
+            address: 10.1.1.8
+            gateway: 10.1.1.3
+            netmask: 255.255.255.255
+          name: 101
+        - address:
+            address: 10.1.2.8
+            gateway: 10.1.2.3
+            netmask: 255.255.255.255
+          name: 102
+        - address:
+            address: 10.1.3.8
+            gateway: 10.1.3.3
+            netmask: 255.255.255.255
+          name: 103
+      image_base_path: /var/lib/libvirt/images/
+      host_aggregates:
+      - host_profiles:
+        - nd-hp1
+        - nd-hp2
+        meta:
+        - nd: true
+        - cpu_allocation_ratio: 1.0
+        name: svr01-nd-ha01
+      - host_profiles:
+        - nv-hp1
+        meta:
+        - nv: true
+        - cpu_allocation_ratio: 1.0
+        name: svr01-nv-ha01
+      - host_profiles:
+        - gv-hp1
+        meta:
+        - gv: true
+        - c2: true
+        - cpu_allocation_ratio: 2.0
+        name: svr01-gv-ha01
+  selective_default_bridge:
+    label: "Select network bridge for KVM Host"
+    description: 'Default network bridge is "Linux", select as per your requirement.'
+    type: "radio"
+    weight: 40
+    value: "linuxbr"
+    values:
+      - data:  "linuxbr"
+        label: "Linux Bridge"
+      - data:  "ovsbr"
+        label: "OVS Bridge"
+  selective_opsvm_pool:
+    label: "Select storage pool for OpenStack Vms"
+    description: 'Default pool type for OpenStack vms is directory(dir), please select storage pool type as per your equirement.'
+    type: "radio"
+    weight: 50
+    value: "dir"
+    values:
+      - data:  "dir"
+        label: "Directory"
+      - data:  "mpath"
+        label: "Multipath"
+  ops_server_config:
+    label: "OpenStack Vms config"
+    type: "textarea"
+    validate: "yaml"
+    weight: 60
+    value: |
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: false
+        is_vm: true
+        kvm: svr01r01a002
+        mac_address: 52:54:00:e5:e4:06
+        name: mosc01
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_mosc01
+        ram: 32
+        server_type: controller
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:c2:dd:c5
+        name: mosc02
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_mosc02
+        ram: 32
+        server_type: controller
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a002
+        mac_address: 52:54:00:b3:dc:b2
+        name: mosc03
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_mosc03
+        ram: 32
+        server_type: controller        
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: false
+        is_vm: true
+        kvm: svr01r01a002
+        mac_address: 52:54:00:3b:e5:fb
+        name: dbmq01
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_dbmq01
+        ram: 32
+        server_type: dbmq
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:92:35:52
+        name: dbmq02
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_dbmq02
+        ram: 32
+        server_type: dbmq
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:aa:53:25
+        name: dbmq03
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_dbmq03
+        ram: 32
+        server_type: dbmq       
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a002
+        mac_address: 52:54:00:7d:8c:ad
+        name: mong01
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_mong01
+        ram: 32
+        server_type: mongo_db
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:21:5d:b3
+        name: mong02
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_mong02
+        ram: 32
+        server_type: mongo_db
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:00:86:3e
+        name: mong03
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_mong03
+        ram: 32
+        server_type: mongo_db
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: false
+        is_vm: true
+        kvm: svr01r01a002
+        mac_address: 52:54:00:f0:2b:5d
+        name: hapr01
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_hapr01
+        ram: 32
+        server_type: haproxy
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:9a:d8:61
+        name: hapr02
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_hapr02
+        ram: 32
+        server_type: haproxy
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a002
+        mac_address: 52:54:00:5c:b3:eb
+        name: hapr03
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_hapr03
+        ram: 32
+        server_type: haproxy
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: false
+        is_vm: true
+        kvm: svr01r01a002
+        mac_address: 52:54:00:07:f1:bd
+        name: kshz01
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_kshz01
+        ram: 32
+        server_type: identity
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:75:24:24
+        name: kshz02
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_kshz02
+        ram: 32
+        server_type: identity
+      - app_volume_name: null
+        cpu: 8
+        app_disk: 120
+        log_disk: 15
+        os_disk: 80
+        ignore: true
+        is_vm: false
+        kvm: svr01r01a003
+        mac_address: 52:54:00:5d:08:78
+        name: kshz03
+        network_profile: vm_ops-profile
+        os_volume_name: mpath_kshz03
+        ram: 32
+        server_type: identity
+      - app_volume_name: null
+        cpu: 0
+        ignore: true
+        is_vm: false
+        kvm: xx:xx:xx:xx:xx:xx
+        name: svr01r01a004
+        network_profile: dellr900_nv-hp1
+        os_volume_name: null
+        ram: 0
+        server_type: compute
