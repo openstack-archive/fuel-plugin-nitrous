@@ -50,8 +50,6 @@ class nitrous {
   $opsvm_pool_type = $hiera_values['selective_opsvm_pool']
 
   $kvm_hosts = opsvm_filter($ops_vms_array, $kvm_hostname, br-fw-admin, br-mgmt)
-  $vlan_tag = split($stg_nm, '\.')
-  $vlan_id = $::nitrous::vlan_tag[1]
   $nic_bond = pick($network_scheme['transformations'])
   $mgmt = $nic_bond[6]
   $mgmt_brg = pick($mgmt['bridge'])
@@ -62,7 +60,9 @@ class nitrous {
   $prv = $nic_bond[8]
   $prv_brg = pick($prv['bridge'])
   $prv_nm = pick($prv['name'])
-
+  $vlan_tag = split($prv_nm, '\.')
+  $vlan_id = $::nitrous::vlan_tag[1]
+  
   if !($proxy_line == 'undef') {
     file_line { 'env_proxy':
       ensure  => 'present',
@@ -73,7 +73,7 @@ class nitrous {
 
   exec { "src_bash":
     command => "bash -c 'source $env_conf'",
-    path    => '/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin',
+    path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games',
   }
 
   file_line { 'agent_conf' :
@@ -92,22 +92,43 @@ class nitrous {
   }
 
   if !($vlan_id == '') {
-    file { '/usr/local/bin/rm_vlan.sh':
-      ensure  => 'present',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0766',
-      content => template('nitrous/vlan.erb'),
+    exec { 'add_brg':
+      command => "brctl addif br-mgmt bond0",
+      path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games',
     }
-   exec { 'remove_vlan':
-     command => '/usr/local/bin/rm_vlan.sh',
-     path    => '/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin',
-   } 
-   exec { 'add_brg':
-     command => "brctl addif br-mgmt bond0",
-     path    => '/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin',
-   } 
   }
+
+  define rm_br::rm_int( $brg, $nm){
+    if !($::nitrous::vlan_id == '') {
+      exec { "brctl delif $brg $nm && sleep 3":
+        onlyif    => "brctl show $brg | grep -F $nm",
+        path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games',
+        logoutput => true,
+      }->
+      exec { "vconfig rem $nm && sleep 3":
+        onlyif    => "ip addr show | grep -F $nm",
+        path      => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games',
+        logoutput => true,
+      }
+    }
+  }
+
+  $br_int ={
+    'mgmt' =>{
+     brg => "$mgmt_brg",
+     nm => "$mgmt_nm",
+    },
+    'stg' =>{
+      brg => "$stg_brg",
+      nm => "$stg_nm",
+    },
+    'prv' =>{
+      brg => "$prv_brg",
+      nm => "$prv_nm",
+    },
+  }
+ 
+  create_resources(rm_br::rm_int, $br_int)
 
   file { '/usr/bin/opsvm':
     ensure  => 'present',
